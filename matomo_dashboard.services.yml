@@ -1,0 +1,4 @@
+services:
+  matomo_dashboard.api_connector:
+    class: Drupal\matomo_dashboard\matomo_dashboardAPIConnector
+    arguments: ["@http_client_factory"]

@@ -1,0 +1,4 @@
+matomo_dashboard-styling:
+  css:
+    theme:
+      css/style.css: {}

@@ -1,0 +1,15 @@
+matomo_dashboard.api_config_page:
+  path: "admin/config/matomo_dashboard"
+  defaults:
+    _form: '\Drupal\matomo_dashboard\Form\matomo_dashboardApiConfigForm'
+    _title: "Matomo API Configuration"
+  requirements:
+    _permission: "administer site configuration"
+
+matomo_dashboard.dashboard:
+  path: "/matomo_dashboard"
+  defaults:
+    _controller: '\Drupal\matomo_dashboard\Controller\matomo_dashboardController::dashboard'
+    _title: "Matomo Dashboard"
+  requirements:
+    _permission: "authenticated"

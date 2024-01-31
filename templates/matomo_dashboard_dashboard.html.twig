@@ -1,0 +1,384 @@
+<link href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" rel="stylesheet" />
+<script type="text/javascript" src="/sites/default/files/api/portail_d4c/js/jquery-3.2.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.30.1/date_fns.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<div class="matomo-content">
+    <h1 class="title">Statistiques d'usage en temps réel<hr /></h1>
+    
+    <div class="summary">
+        <p class="matomo-paragraph">Nous collectons et analysons nos statistiques d'usage à l'aide de Matomo, une plateforme d'analyse 
+            web open-source. Matomo nous permet de suivre diverses métriques et informations essentielles pour 
+            comprendre comment notre site web est utilisé.</p>
+
+        <p class="matomo-paragraph">Pour obtenir ces données, nous utilisons plusieurs modules de l'API Matomo, notamment :</p>
+        
+        <ul>
+            <li>
+            <p class="matomo-paragraph"><strong>VisitsSummary (Résumé des Visites)</strong> : Ce module nous fournit des informations 
+                sur le nombre total de visites, le nombre de visiteurs uniques, la durée moyenne des visites et
+                bien plus encore.</p>
+            </li>
+            <li>
+            <p class="matomo-paragraph"><strong>Actions</strong> : Nous utilisons ce module pour suivre les 
+                actions des utilisateurs sur notre site, telles que les pages vues, 
+                les téléchargements, les liens sortants et les recherches internes.</p>
+            </li>
+            <li>
+            <p class="matomo-paragraph"><strong>Referrers (Référents)</strong> : Grâce à ce module, nous pouvons 
+                découvrir d'où proviennent nos visiteurs, que ce soit à partir de moteurs de 
+                recherche, de sites web externes ou d'autres sources.</p>
+            </li>
+            <li>
+            <p class="matomo-paragraph"><strong>DevicesDetection (Détection des Dispositifs)</strong> : Ce module nous permet de 
+                connaître les types de dispositifs que nos visiteurs utilisent pour accéder à notre site, 
+                comme les ordinateurs de bureau, les smartphones ou les tablettes.</p>
+            </li>
+        </ul>
+        
+        <p class="matomo-paragraph">Toutes nos requêtes API sont filtrées pour afficher les informations du jour en cours, ce 
+            qui nous permet de suivre de manière précise et en temps réel l'utilisation de notre site.</p>
+        
+        <p class="matomo-paragraph">Si vous souhaitez en savoir plus sur ces modules ou accéder à des informations détaillées 
+            sur nos statistiques d'usage, n'hésitez pas à consulter la 
+            <a href="https://developer.matomo.org/api-reference/reporting-api" target="_new">
+                Documentation Matomo API
+            </a>. 
+                
+            Cette ressource vous fournira une compréhension approfondie de la manière dont nous 
+            collectons et analysons les données pour améliorer votre expérience sur notre site web.</p>
+    </div>
+
+    <div class="recap">
+        <h2>Récapitulatif des visites</h2>
+        <div id="sessions">
+        {% set formatedDate = content.date %}
+            
+        <div class="sparkline"><h4>Au cours des 7 derniers jours / </h4><div>
+            <h4>
+                {% if formatedDate == 'today' %}
+                    {{ 'Aujourd\'hui' }}
+                {% elseif formatedDate == 'yesterday' %}
+                    {{ 'Hier' }}
+                {% elseif formatedDate == 'last7' %}
+                    {{ 'Semaine en cours' }}
+                {% elseif formatedDate == 'last30' %}
+                    {{ 'Mois en cours' }}
+                {% elseif formatedDate == 'last365' %}
+                    {{ 'Année en cours' }}
+                {% endif %}
+            </h4></div></div>
+            <br />
+            <div class="sparkline"><div><img title="7 derniers jours" id="imgVisits" src="{{content.sparkline_images.visits}}" width="100" height="25" /></div><div><strong id="nb_visits">{{ content.sparkline_infos.nb_visits}}</strong> visites, <strong id="nb_uniq_visitors">{{ content.sparkline_infos.nb_uniq_visitors}}</strong> visiteurs uniques</div></div>
+            <div class="sparkline"><div><img title="7 derniers jours" id="imgLength" src="{{ content.sparkline_images.length}}" width="100" height="25" /></div><div><strong id="minsec">{{ content.sparkline_infos.avg_time_on_site}}</strong> durée moyenne d'une visite</div></div>
+            <div class="sparkline"><div><img title="7 derniers jours" id="imgBounce" src="{{ content.sparkline_images.bounce}}" width="100" height="25" /></div><div><strong id="bounce_rate">{{ content.sparkline_infos.bounce_rate}}</strong> visiteurs ayant survolé (quitté le site après une page)</div></div>
+            <div class="sparkline"><div><img title="7 derniers jours" id="imgActions" src="{{ content.sparkline_images.actions}}" width="100" height="25" /></div><div><strong id="nb_actions_per_visit">{{ content.sparkline_infos.nb_actions_per_visit}}</strong> actions (pages vues, téléchargements, liens sortants et recherches internes) par visite</div></div>
+            <div class="sparkline"><div><img title="7 derniers jours" id="imgMaxActions" src="{{ content.sparkline_images.maxActions}}" width="100" height="25" /></div><div><strong id="max_actions">{{ content.sparkline_infos.max_actions}}</strong> actions max en une visite</div></div>
+            <div class="sparkline"><div><img title="7 derniers jours" id="imgPages" src="{{ content.sparkline_images.pages}}" width="100" height="25" /></div><div><strong id="nb_pageviews">{{ content.sparkline_infos2.nb_pageviews}}</strong> pages vues, <strong id="nb_uniq_pageviews">{{ content.sparkline_infos2.nb_uniq_pageviews}}</strong> pages vues uniques</div></div>
+            <div class="sparkline"><div><img title="7 derniers jours" id="imgDownloads" src="{{ content.sparkline_images.downloads}}" width="100" height="25" /></div><div><strong id="nb_downloads">{{ content.sparkline_infos2.nb_downloads}}</strong> téléchargements, <strong id="nb_uniq_downloads">{{ content.sparkline_infos2.nb_uniq_downloads}}</strong> téléchargements uniques</div></div>
+            <div class="sparkline"><div><img title="7 derniers jours" id="imgLinks" src="{{ content.sparkline_images.links}}" width="100" height="25" /></div><div><strong id="nb_outlinks">{{ content.sparkline_infos2.nb_outlinks}}</strong> liens sortants, <strong id="nb_uniq_outlinks">{{ content.sparkline_infos2.nb_uniq_outlinks}}</strong> liens externes uniques</div></div>
+        </div>
+    </div>
+    <div class="popular-pages">
+        <h2>Pages les plus visitées</h2>
+        {% if content.visits_summary %}
+    <table class="matomo-datatable">
+        <thead>
+        <tr>
+            <th>Titres des pages</th>
+            <th>Nombre de visites</th>
+            <th>Visites uniques</th>
+            <th>Durée moyenne de visite (en s)</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for row in content.visits_summary %}
+            <tr>
+            <td>{{ row.label }}</td>
+            <td>{{ row.nb_visits }}</td>
+            <td>{{ row.nb_uniq_visitors }}</td>
+            <td>{{ row.avg_time_on_page }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="matomo-paragraph">Aucune donnée à afficher.</p>
+    {% endif %}
+    </div>
+    <div class="channeltypes">
+        <h2>Types de canaux</h2>
+        <div class="table-wrapper">
+            <table id="referentStat" class="matomo-datatable">
+                <thead>
+                    <tr>
+                        <th>Type de canal</th>
+                        <th>Nombre de visites</th>
+                        <th>Visites uniques</th>
+                        <th>Actions</th>
+                        <th>Actions par visite</th>
+                        <th>Durée moyenne de visite</th>
+                        <th>Taux de rebond</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+
+                    {% for row in content.referrer_type %}
+                        <tr>
+                        <td>{{ row.label }}</td>
+                        <td>{{ row.nb_visits }}</td>
+                        <td>{{ row.nb_uniq_visitors }}</td>
+                        <td>{{ row.nb_actions }}</td>
+                        <td>
+                            {% if row.nb_visits > 0 %}
+                                {{ (row.nb_actions / row.nb_visits)|round(2) }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                            </td>
+                            {% if row.nb_visits > 0 %}
+                                {% set totalSeconds = row.sum_visit_length / row.nb_visits %}
+                                {% set hours2 = totalSeconds / 3600|round(0, 'floor') %}
+                                {% set minutes2 = (totalSeconds % 3600) / 60|round(0, 'floor') %}
+                                {% set seconds2 = totalSeconds % 60|round(0, 'floor') %}
+                                <td>{{ '%02d:%02d:%02d'|format(hours2, minutes2, seconds2) }}</td>
+                            {% else %}
+                                <td>N/A</td>
+                            {% endif %}
+                            {% if row.nb_visits > 0 %}
+                                <td>{{ (row.bounce_count / row.nb_visits)|round(2) * 100 }}%</td>
+                            {% else %}
+                                <td>N/A</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+    </div>
+    <div class="devicestypes">
+        <h2>Types d'appareils</h2>
+        <div class="table-wrapper">
+            <table id="devicetStat" class="matomo-datatable">
+                <thead>
+                    <tr>
+                        <th>Type d'appareil</th>
+                        <th>Nombre de visites</th>
+                        <th>Visites uniques</th>
+                        <th>Actions</th>
+                        <th>Actions par visite</th>
+                        <th>Durée moyenne de visite</th>
+                        <th>Taux de rebond</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        
+        
+                        {% for row in content.devices_type %}
+                            <tr>
+                            <td>{{ row.label }}</td>
+                            <td>{{ row.nb_visits }}</td>
+                            <td>{{ row.nb_uniq_visitors }}</td>
+                            <td>{{ row.nb_actions }}</td>
+                            <td>
+                            {% if row.nb_visits > 0 %}
+                                {{ (row.nb_actions / row.nb_visits)|round(2) }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                            </td>
+                            {% if row.nb_visits > 0 %}
+                                {% set totalSeconds = row.sum_visit_length / row.nb_visits %}
+                                {% set hours2 = totalSeconds / 3600|round(0, 'floor') %}
+                                {% set minutes2 = (totalSeconds % 3600) / 60|round(0, 'floor') %}
+                                {% set seconds2 = totalSeconds % 60|round(0, 'floor') %}
+                                <td>{{ '%02d:%02d:%02d'|format(hours2, minutes2, seconds2) }}</td>
+                            {% else %}
+                                <td>N/A</td>
+                            {% endif %}
+                            {% if row.nb_visits > 0 %}
+                                <td>{{ (row.bounce_count / row.nb_visits)|round(2) * 100 }}%</td>
+                            {% else %}
+                                <td>N/A</td>
+                            {% endif %}
+                            
+                            
+                            </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+            </div>
+    </div>
+    <div class="last7days">
+        <h2>Graphique des visites au cours des 7 derniers jours</h2>
+        <div id="canvas-container"><canvas id="lastVisits"></canvas></div>
+        <script>
+            
+            function fetchDataAndCreateChart() {
+                // Create the Chart.js chart
+                var formattedData = drupalSettings.matomo_dashboard.chartData;
+                var ctx = document.getElementById('lastVisits').getContext('2d');
+                var dates = formattedData.map(function (item) {
+                    return item.date;
+                });
+                var visits = formattedData.map(function (item) {
+                    return item.nb_visits;
+                });
+                var uniqueVisitors = formattedData.map(function (item) {
+                    return item.nb_uniq_visitors;
+                });
+
+                var chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: [
+                            {
+                                label: 'Visites',
+                                data: visits,
+                                borderColor: '#000091',
+                                fill: false
+                            },
+                            {
+                                label: 'Visitors uniques', // Second dataset (unique visitors)
+                                data: uniqueVisitors, // Replace with your actual data
+                                borderColor: '#e1000f', // Choose a color for the line
+                                fill: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    unit: 'day' // Display x-axis labels by day
+                                }
+                            },
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        elements: {
+                            line: {
+                                tension: 0
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Call the function to fetch data and create the chart
+            document.addEventListener('DOMContentLoaded', function() {
+            fetchDataAndCreateChart();
+            });
+        </script>
+    </div>
+    <div class="mapvisits">
+        <h2>Visites sur la carte</h2>
+        <div id="map" style="height: 500px;"></div>
+        <script>
+
+            function formattedDuration(visitLength) {
+                var hours = Math.floor(visitLength / 3600);
+                var minutes = Math.floor((visitLength % 3600) / 60);
+                var seconds = visitLength % 60;
+
+                // Format the duration
+                var formattedDuration = '';
+
+                if (hours > 0) {
+                    formattedDuration += hours + 'h ';
+                }
+
+                if (minutes > 0 || hours > 0) {
+                    formattedDuration += minutes + 'min ';
+                }
+
+                formattedDuration += seconds + 's';
+
+                return formattedDuration;
+            }
+            function createMap() {
+                // Initialize the map
+                var data = drupalSettings.matomo_dashboard.mapData;
+                var map = L.map('map').setView([48.88, 2.304], 5); // Set an initial center and zoom level
+
+                // Add a tile layer (you can choose a different tile layer provider)
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+
+                // Loop through the API data and add markers to the map
+                data.forEach(function (item) {
+                    var lat = item.lat;
+                    var lon = item.long;
+                    var label = item.label;
+                    var nbVisits = item.nb_visits;
+                    var nbUniqVisitors = item.nb_uniq_visitors;
+                    var avgVisitLength = Math.round(item.sum_visit_length / item.nb_visits);
+                    var bounce_rate = Math.round(item.bounce_count / item.nb_visits * 100) + ' %';
+                    var nbActionsVisit = Math.round(item.nb_actions / item.nb_visits);
+                    var nbActions = item.nb_actions;
+
+                    // Create the HTML content for the popup
+                    var popupContent = `
+                        <h4>${label}</h4>
+                        <div class="table-wrapper">
+                            <table id="popUpTable">
+                                <thead>
+                                    <tr>
+                                        <th>Indicateur</th>
+                                        <th>Valeur</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Visites</td>
+                                        <td>${nbVisits}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Visiteurs uniques</td>
+                                        <td>${nbUniqVisitors}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Durée moyenne d'une visite</td>
+                                        <td>${formattedDuration(avgVisitLength)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Visiteurs ayant survolé</td>
+                                        <td>${bounce_rate}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Actions</td>
+                                        <td>${nbActions}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Actions par visite</td>
+                                        <td>${nbActionsVisit}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+
+                    var marker = L.marker([lat, lon]).addTo(map);
+                    marker.bindPopup(popupContent);
+                });
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                createMap();
+            });
+        </script>
+    </div>
+    <div class="matomo-link">
+        <h2>Lien vers les statistiques d'usage :</h2>
+        <a href="{{ content.api_url }}" target="_blank"><button class="matomo-button">Statistiques d'usage</button></a>
+    </div>
+</div>

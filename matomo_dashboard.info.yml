@@ -1,0 +1,6 @@
+name: "Matomo Dashboard"
+type: module
+description: "Shows Matomo Dashboard using Matomo API"
+core_version_requirement: ^8 || ^9 || ^10
+package: Custom
+version: 1.0
